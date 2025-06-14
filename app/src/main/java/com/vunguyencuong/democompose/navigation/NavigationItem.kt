@@ -25,13 +25,4 @@ sealed class NavigationItem(
         R.drawable.ic_setting_selected,
         "Settings")
 
-    object Article : NavigationItem(
-        route = "article/{text}",
-        icon = 0,
-        iconSelected = 0,
-        title =  "Article"
-    ){
-        fun createRoute(text: String) = "article/$text"
-    }
-
 }

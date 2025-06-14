@@ -1,3 +1,6 @@
 package com.vunguyencuong.democompose.ui.article
 
-data class Article()
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class Article(val text: String)

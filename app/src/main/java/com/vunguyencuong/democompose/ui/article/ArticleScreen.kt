@@ -1,4 +1,4 @@
-package com.vunguyencuong.democompose.ui
+package com.vunguyencuong.democompose.ui.article
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
