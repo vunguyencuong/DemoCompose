@@ -8,18 +8,18 @@ sealed class NavigationItem(
     val iconSelected: Int,
     val title: String) {
 
-    object Home: NavigationItem(
+    object HomeRoute: NavigationItem(
         "home",
         R.drawable.ic_home_unselected,
         R.drawable.ic_home_selected,
         "Home"
     )
-    object Library: NavigationItem(
+    object LibraryRoute: NavigationItem(
         "library",
         R.drawable.ic_library_unselected,
         R.drawable.ic_library_selected,
          "Library")
-    object Settings: NavigationItem(
+    object SettingsRoute: NavigationItem(
         "settings",
         R.drawable.ic_setting_unselected,
         R.drawable.ic_setting_selected,

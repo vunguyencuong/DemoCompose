@@ -1,6 +1,7 @@
 package com.vunguyencuong.democompose
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -23,13 +24,17 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.toRoute
+import com.vunguyencuong.democompose.navigation.CustomNavType
 import com.vunguyencuong.democompose.navigation.NavigationItem
 import com.vunguyencuong.democompose.ui.article.Article
+import com.vunguyencuong.democompose.ui.article.ArticleDetailRoute
 import com.vunguyencuong.democompose.ui.article.ArticleScreen
 import com.vunguyencuong.democompose.ui.home.HomeScreen
 import com.vunguyencuong.democompose.ui.library.LibraryScreen
 import com.vunguyencuong.democompose.ui.setting.SettingScreen
 import com.vunguyencuong.democompose.ui.theme.DemoComposeTheme
+import kotlinx.serialization.json.Json
+import kotlin.reflect.typeOf
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,6 +53,10 @@ fun MainScreen() {
 
     val navController = rememberNavController()
 
+    val navTypes = mapOf(
+        typeOf<Article>() to CustomNavType(Article.serializer())
+    )
+
 
     Scaffold(
         bottomBar = {
@@ -56,24 +65,35 @@ fun MainScreen() {
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = NavigationItem.Home.route,
+            startDestination = NavigationItem.HomeRoute.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(NavigationItem.Home.route) {
+            composable(NavigationItem.HomeRoute.route) {
                 HomeScreen(
-                    onHomeClick = { text ->
-                        navController.navigate(Article(text))
+                    onArticleClick = { article ->
+                        Log.d("Article", "MainScreen: $article")
+                        try {
+                            // Test serialize manually
+                            val json = Json.encodeToString(Article.serializer(), article)
+                            Log.d("Article", "Serialized JSON: $json")
+                            navController.navigate(ArticleDetailRoute(article))
+                        } catch (e: Exception) {
+                            Log.e("Article", "Error serializing: ${e.message}")
+                        }
                     }
                 )
             }
-            composable<Article> { backStackEntry ->
-                val article: Article = backStackEntry.toRoute()
-                ArticleScreen(article.text)
+            composable<ArticleDetailRoute>(
+                typeMap = navTypes
+            ) { backStackEntry ->
+                val route = backStackEntry.toRoute<ArticleDetailRoute>()
+                Log.d("Article", "MainScreen: ArticleDetailRoute ${route.article}")
+                ArticleScreen(route.article,navController)
             }
-            composable(NavigationItem.Library.route) {
+            composable(NavigationItem.LibraryRoute.route) {
                 LibraryScreen()
             }
-            composable(NavigationItem.Settings.route) {
+            composable(NavigationItem.SettingsRoute.route) {
                 SettingScreen()
             }
         }
